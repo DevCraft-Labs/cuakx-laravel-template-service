@@ -7,13 +7,21 @@ use App\Http\Controllers\ExampleModule\ExampleFunction\ExampleService;
 use App\Http\Controllers\ExampleModule\ExampleFunction\Exception\TestingException;
 use Cuakx\Core\DTO\BaseResponseDTO;
 use Cuakx\Core\Http\Controllers\BaseController;
+use Cuakx\Core\Http\Middleware\AuthCheck;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
+#[Middleware(AuthCheck::class, only: ['getIsOdd'])]
 class ExampleController extends BaseController
 {
     public function __construct(private ExampleService $exampleService){}
 
+    /**
+     * This function will be not able to execute unless you have a valid access token
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function getIsOdd(Request $request): JsonResponse {
         $this->baseValidator($request, [
             "number" => "required",
