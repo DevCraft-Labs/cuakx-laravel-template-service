@@ -1,6 +1,8 @@
 <?php
 
 use Cuakx\Core\DTO\BaseResponseDTO;
+use Cuakx\Core\Exceptions\BadRequestException;
+use Cuakx\Core\Utils\Auth\Session\Exception\UnauthorizedException;
 use Cuakx\Core\Utils\Console;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -32,6 +34,18 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->is('api/*')) {
                 return BaseResponseDTO::error("401", $e->getMessage());
+            }
+        });
+
+        $exceptions->render(function (BadRequestException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return BaseResponseDTO::error("400", $e->getMessage());
+            }
+        });
+
+        $exceptions->render(function (UnauthorizedException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return BaseResponseDTO::error("403", $e->getMessage());
             }
         });
 
